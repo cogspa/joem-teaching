@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Joe Micallef | Personal and Student Animation Gallery</title>
+  <style>
+    :root {
+      --bg: #0b0f14;
+      --panel: #121821;
+      --panel-2: #171f2b;
+      --card: rgba(255, 255, 255, 0.04);
+      --line: rgba(255, 255, 255, 0.1);
+      --text: #eef3f8;
+      --muted: #aab6c5;
+      --accent: #79c7ff;
+      --accent-2: #c6a2ff;
+      --shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(121, 199, 255, 0.16), transparent 28%),
+        radial-gradient(circle at top right, rgba(198, 162, 255, 0.18), transparent 30%),
+        linear-gradient(180deg, #0a0f15, #0d131b 42%, #0b0f14 100%);
+      min-height: 100vh;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .site {
+      width: min(1200px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 56px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: linear-gradient(135deg, rgba(18, 24, 33, 0.98), rgba(23, 31, 43, 0.88));
+      border-radius: 28px;
+      padding: 34px 28px;
+      box-shadow: var(--shadow);
+      margin-bottom: 22px;
+    }
+
+    .hero::before,
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto;
+      width: 340px;
+      height: 340px;
+      border-radius: 50%;
+      filter: blur(55px);
+      opacity: 0.35;
+      pointer-events: none;
+    }
+
+    .hero::before {
+      right: -80px;
+      top: -120px;
+      background: rgba(121, 199, 255, 0.4);
+    }
+
+    .hero::after {
+      left: -120px;
+      bottom: -180px;
+      background: rgba(198, 162, 255, 0.28);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.76rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid rgba(121, 199, 255, 0.24);
+      background: rgba(121, 199, 255, 0.08);
+      border-radius: 999px;
+      padding: 8px 12px;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(2rem, 4vw, 3.45rem);
+      line-height: 1.02;
+      letter-spacing: -0.03em;
+      max-width: 11ch;
+    }
+
+    .hero p {
+      margin: 0;
+      max-width: 72ch;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 1rem;
+    }
+
+    .hero-actions,
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .btn,
+    .filter-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 11px 15px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+    }
+
+    .btn:hover,
+    .filter-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn.primary,
+    .filter-btn.active {
+      background: linear-gradient(135deg, var(--accent), #99d7ff);
+      color: #07131e;
+    }
+
+    .btn.secondary,
+    .filter-btn {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text);
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+
+    .btn.secondary:hover,
+    .filter-btn:hover {
+      border-color: rgba(121, 199, 255, 0.32);
+      color: white;
+    }
+
+    .note {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .section {
+      margin-top: 30px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-size: 0.76rem;
+    }
+
+    .section-title {
+      margin: 0;
+      font-size: clamp(1.45rem, 2vw, 2rem);
+      letter-spacing: -0.02em;
+    }
+
+    .section-copy {
+      margin: 6px 0 0;
+      color: var(--muted);
+      line-height: 1.6;
+      max-width: 75ch;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.035));
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      min-height: 100%;
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(121, 199, 255, 0.25);
+      box-shadow: 0 20px 48px rgba(0, 0, 0, 0.4);
+    }
+
+    .card.hidden {
+      display: none;
+    }
+
+    .media,
+    .placeholder {
+      position: relative;
+      aspect-ratio: 16 / 9;
+      width: 100%;
+      background: linear-gradient(160deg, #1b2430, #0e131b);
+      overflow: hidden;
+    }
+
+    .media iframe,
+    .media video,
+    .media img {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      object-fit: cover;
+      display: block;
+      background: #0a0f15;
+    }
+
+    .placeholder {
+      display: grid;
+      place-items: center;
+      padding: 20px;
+    }
+
+    .placeholder::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(121, 199, 255, 0.22), transparent 25%),
+        radial-gradient(circle at 80% 30%, rgba(198, 162, 255, 0.18), transparent 22%),
+        linear-gradient(140deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+    }
+
+    .placeholder-content {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      max-width: 32ch;
+    }
+
+    .placeholder-icon {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 14px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.08);
+      font-size: 1.65rem;
+    }
+
+    .placeholder h3 {
+      margin: 0 0 8px;
+      font-size: 1.12rem;
+      letter-spacing: -0.02em;
+    }
+
+    .placeholder p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 0.95rem;
+    }
+
+    .card-body {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      padding: 18px;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
+      line-height: 1;
+      letter-spacing: 0.02em;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.11);
+      background: rgba(255, 255, 255, 0.05);
+      color: #dce7f4;
+    }
+
+    .card h3 {
+      margin: 0 0 10px;
+      font-size: 1.22rem;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+    }
+
+    .card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.62;
+      font-size: 0.96rem;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: auto;
+      padding-top: 16px;
+    }
+
+    .small {
+      font-size: 0.86rem;
+      color: var(--muted);
+      margin-top: 12px;
+    }
+
+    .links-panel {
+      margin-top: 32px;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.03));
+      border-radius: 24px;
+      padding: 22px;
+      box-shadow: var(--shadow);
+    }
+
+    .links-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .link-card {
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.035);
+      border-radius: 16px;
+      padding: 16px;
+    }
+
+    .link-card h4 {
+      margin: 0 0 10px;
+      font-size: 1rem;
+      letter-spacing: -0.01em;
+    }
+
+    .link-card ul {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .link-card li + li {
+      margin-top: 6px;
+    }
+
+    footer {
+      margin-top: 30px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 780px) {
+      .site {
+        width: min(100% - 20px, 1200px);
+        padding-top: 16px;
+      }
+
+      .hero {
+        padding: 24px 18px;
+        border-radius: 22px;
+      }
+
+      .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .links-panel {
+        padding: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="site">
+    <header class="hero">
+      <div class="eyebrow">Joe Micallef &nbsp;•&nbsp; Gallery Site Draft</div>
+      <h1>Personal and Student Animation Examples</h1>
+      <p>
+        A clean, responsive gallery page for student work and personal/professional projects.
+        The page groups the work under category headers and includes direct viewing, download,
+        and external-site buttons where available.
+      </p>
+      <div class="hero-actions">
+        <a class="btn primary" href="#student-work">Jump to Student Work</a>
+        <a class="btn secondary" href="#personal-work">Jump to Personal Work</a>
+      </div>
+      <div class="filters" aria-label="Gallery filters">
+        <button class="filter-btn active" type="button" data-filter="all">All</button>
+        <button class="filter-btn" type="button" data-filter="student">Student Work</button>
+        <button class="filter-btn" type="button" data-filter="personal">Personal / Professional</button>
+        <button class="filter-btn" type="button" data-filter="2d">2D Animation</button>
+        <button class="filter-btn" type="button" data-filter="3d">3D / VFX</button>
+        <button class="filter-btn" type="button" data-filter="stop-motion">Stop Motion</button>
+      </div>
+      <p class="note">
+        Note: the Pasadena City College Dropbox folder is presented as a featured folder card because the shared folder link does not expose individual file names here. If you later share direct links for each student piece, those can be split into separate gallery tiles.
+      </p>
+    </header>
+
+    <section class="section" id="student-work">
+      <div class="section-header">
+        <div>
+          <div class="section-label">Student Work</div>
+          <h2 class="section-title">Student Animation Examples from Classes I Have Taught</h2>
+          <p class="section-copy">
+            Examples from OTIS Summer of Art and Pasadena City College, presented as labeled gallery cards with direct access to the source material.
+          </p>
+        </div>
+      </div>
+
+      <div class="gallery">
+        <article class="card" data-tags="student 2d">
+          <div class="media">
+            <video controls preload="metadata" playsinline>
+              <source src="https://www.dropbox.com/scl/fi/kk08etc7kqrku9k8y34wk/Sequence-01.mp4?rlkey=a61ah7imuau5sd51cd7eqsir0&amp;st=oc7nndvd&amp;raw=1" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+          </div>
+          <div class="card-body">
+            <div class="tags">
+              <span class="tag">Student Work</span>
+              <span class="tag">OTIS Summer of Art</span>
+              <span class="tag">2D Animation</span>
+            </div>
+            <h3>OTIS Summer of Art Student Animation</h3>
+            <p>
+              Featured student animation example from the OTIS Summer of Art course. This card uses the Dropbox file link directly for playback and includes separate preview and download buttons.
+            </p>
+            <div class="actions">
+              <a class="btn primary" href="https://www.dropbox.com/scl/fi/kk08etc7kqrku9k8y34wk/Sequence-01.mp4?rlkey=a61ah7imuau5sd51cd7eqsir0&amp;st=oc7nndvd&amp;raw=1" target="_blank" rel="noopener noreferrer">Play Direct</a>
+              <a class="btn secondary" href="https://www.dropbox.com/scl/fi/kk08etc7kqrku9k8y34wk/Sequence-01.mp4?rlkey=a61ah7imuau5sd51cd7eqsir0&amp;st=oc7nndvd&amp;dl=1" target="_blank" rel="noopener noreferrer">Download MP4</a>
+              <a class="btn secondary" href="https://www.dropbox.com/scl/fi/kk08etc7kqrku9k8y34wk/Sequence-01.mp4?rlkey=a61ah7imuau5sd51cd7eqsir0&amp;st=oc7nndvd&amp;dl=0" target="_blank" rel="noopener noreferrer">Open in Dropbox</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="card" data-tags="student 2d">
+          <div class="placeholder" role="img" aria-label="Pasadena City College Dropbox folder placeholder">
+            <div class="placeholder-content">
+              <div class="placeholder-icon">📁</div>
+              <h3>Pasadena City College 2D Animation Examples</h3>
+              <p>
+                Shared Dropbox folder of class examples.
+                Open the folder to browse the work, or use the download button to try the Dropbox download flow.
+              </p>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="tags">
+              <span class="tag">Student Work</span>
+              <span class="tag">Pasadena City College</span>
+              <span class="tag">2D Animation</span>
+            </div>
+            <h3>Pasadena City College 2D Animation Examples</h3>
+            <p>
+              This entry points to a shared Dropbox folder rather than a single video file, so it works best as a featured folder card. Once individual file links are available, the folder can be expanded into multiple gallery items.
+            </p>
+            <div class="actions">
+              <a class="btn primary" href="https://www.dropbox.com/scl/fo/623bii2s0rjr389pai6zq/ABjtQr15XowCF4I9-XJKEwQ?rlkey=ogrwx9cy75160bvuml4adybrw&amp;st=7jayrpod&amp;dl=0" target="_blank" rel="noopener noreferrer">Open Folder</a>
+              <a class="btn secondary" href="https://www.dropbox.com/scl/fo/623bii2s0rjr389pai6zq/ABjtQr15XowCF4I9-XJKEwQ?rlkey=ogrwx9cy75160bvuml4adybrw&amp;st=7jayrpod&amp;dl=1" target="_blank" rel="noopener noreferrer">Try ZIP Download</a>
+            </div>
+            <p class="small">Best next step for a fuller gallery: replace this folder card with one card per student example.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="personal-work">
+      <div class="section-header">
+        <div>
+          <div class="section-label">Personal / Professional Work</div>
+          <h2 class="section-title">My Personal and Professional Projects</h2>
+          <p class="section-copy">
+            Demo reel, traditional animation, stop motion, and sculpt work presented in a unified portfolio layout.
+          </p>
+        </div>
+      </div>
+
+      <div class="gallery">
+        <article class="card" data-tags="personal 3d">
+          <div class="media">
+            <img src="assets/jmdemotitle.png" alt="Joe Micallef Demo Reel title card" />
+          </div>
+          <div class="card-body">
+            <div class="tags">
+              <span class="tag">Personal / Professional</span>
+              <span class="tag">Demo Reel</span>
+              <span class="tag">3D / VFX</span>
+            </div>
+            <h3>Joe Micallef Demo Reel</h3>
+            <p>
+              Personal demo reel featuring VFX work in Houdini, Maya, and Blender, with the reel hosted at joemdemo.com.
+            </p>
+            <div class="actions">
+              <a class="btn primary" href="https://joemdemo.com/" target="_blank" rel="noopener noreferrer">Open Demo Reel</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="card" data-tags="personal 2d">
+          <div class="media">
+            <iframe
+              src="https://www.youtube.com/embed/XguKsssIP_k"
+              title="Mind Wiggles"
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen
+            ></iframe>
+          </div>
+          <div class="card-body">
+            <div class="tags">
+              <span class="tag">Personal Work</span>
+              <span class="tag">2D Animation</span>
+              <span class="tag">Traditional / Cel</span>
+            </div>
+            <h3>Mind Wiggles</h3>
+            <p>
+              2D traditional cel animation shot on an Oxberry camera.
+            </p>
+            <div class="actions">
+              <a class="btn primary" href="https://www.youtube.com/watch?v=XguKsssIP_k" target="_blank" rel="noopener noreferrer">Watch on YouTube</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="card" data-tags="personal stop-motion">
+          <div class="media">
+            <iframe
+              src="https://www.youtube.com/embed/g59mluClY8k"
+              title="The Interlopers"
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen
+            ></iframe>
+          </div>
+          <div class="card-body">
+            <div class="tags">
+              <span class="tag">Personal Work</span>
+              <span class="tag">Stop Motion</span>
+              <span class="tag">Collaboration</span>
+            </div>
+            <h3>The Interlopers</h3>
+            <p>
+              Stop motion collaboration with Jan Pfenninger.
+            </p>
+            <div class="actions">
+              <a class="btn primary" href="https://www.youtube.com/watch?v=g59mluClY8k" target="_blank" rel="noopener noreferrer">Watch on YouTube</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="card" data-tags="personal 3d">
+          <div class="placeholder" role="img" aria-label="ZBrush and 3D sculpt blog placeholder">
+            <div class="placeholder-content">
+              <div class="placeholder-icon">🗿</div>
+              <h3>ZBrush / 3D Sculpts</h3>
+              <p>
+                External blog featuring sculpt work. Best presented here as a featured outbound portfolio card.
+              </p>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="tags">
+              <span class="tag">Personal Work</span>
+              <span class="tag">ZBrush</span>
+              <span class="tag">3D Sculpts</span>
+            </div>
+            <h3>ZBrush / 3D Sculpts</h3>
+            <p>
+              Portfolio link to sculpt studies and related 3D work.
+            </p>
+            <div class="actions">
+              <a class="btn primary" href="https://monsterrig.blogspot.com/" target="_blank" rel="noopener noreferrer">Visit Sculpt Blog</a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="links-panel" id="source-links">
+      <div class="section-label">Working Link Set</div>
+      <h2 class="section-title">Source and Delivery Links</h2>
+      <p class="section-copy">
+        These are the cleaned links used in this page. The Dropbox file uses a direct render version for playback and a separate download version for saving the file.
+      </p>
+
+      <div class="links-grid">
+        <div class="link-card">
+          <h4>OTIS Summer of Art</h4>
+          <ul>
+            <li>Dropbox preview link</li>
+            <li>Direct render link using <code>raw=1</code></li>
+            <li>Direct download link using <code>dl=1</code></li>
+          </ul>
+        </div>
+
+        <div class="link-card">
+          <h4>Pasadena City College Folder</h4>
+          <ul>
+            <li>Shared Dropbox folder link</li>
+            <li>ZIP download attempt using <code>dl=1</code></li>
+            <li>Best future upgrade: add one direct link per student file</li>
+          </ul>
+        </div>
+
+        <div class="link-card">
+          <h4>Personal / Professional Work</h4>
+          <ul>
+            <li>Demo reel site: joemdemo.com</li>
+            <li>YouTube embeds for Mind Wiggles and The Interlopers</li>
+            <li>External blog link for ZBrush / 3D sculpt work</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      Built as a single-file gallery page for easy editing, upload, or handoff to a web developer.
+      Replace any card text, add student names, or swap media URLs directly in the HTML as needed.
+    </footer>
+  </div>
+
+  <script>
+    const buttons = document.querySelectorAll('.filter-btn');
+    const cards = document.querySelectorAll('.card');
+
+    buttons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const filter = button.dataset.filter;
+
+        buttons.forEach((btn) => btn.classList.remove('active'));
+        button.classList.add('active');
+
+        cards.forEach((card) => {
+          const tags = card.dataset.tags.split(' ');
+          const show = filter === 'all' || tags.includes(filter);
+          card.classList.toggle('hidden', !show);
+        });
+      });
+    });
+  </script>
+</body>
+</html>
