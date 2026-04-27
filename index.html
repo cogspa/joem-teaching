@@ -413,6 +413,80 @@
       margin-top: 6px;
     }
 
+    .walk-cycle-showcase {
+      grid-column: 1 / -1;
+    }
+
+    .walk-cycle-showcase .media {
+      aspect-ratio: 16 / 9;
+      background: #000;
+      position: relative;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .walk-cycle-showcase .media video,
+    .walk-cycle-showcase .media img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: #000;
+    }
+
+    .walk-cycle-thumbnails {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      margin-top: 20px;
+      padding-bottom: 12px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 255, 255, 0.2) rgba(255, 255, 255, 0.05);
+    }
+
+    .walk-cycle-thumbnails::-webkit-scrollbar {
+      height: 8px;
+    }
+
+    .walk-cycle-thumbnails::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 4px;
+    }
+
+    .walk-cycle-thumbnails::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+    }
+
+    .walk-cycle-thumbnail {
+      width: 120px;
+      height: 68px;
+      flex-shrink: 0;
+      cursor: pointer;
+      border: 2px solid transparent;
+      border-radius: 8px;
+      overflow: hidden;
+      transition: all 0.2s ease;
+      background: #111a26;
+      opacity: 0.6;
+    }
+
+    .walk-cycle-thumbnail:hover {
+      opacity: 1;
+      transform: translateY(-2px);
+    }
+
+    .walk-cycle-thumbnail.active {
+      border-color: var(--accent);
+      opacity: 1;
+    }
+
+    .walk-cycle-thumbnail video,
+    .walk-cycle-thumbnail img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      pointer-events: none;
+    }
+
     footer {
       margin-top: 30px;
       text-align: center;
@@ -478,6 +552,26 @@
       </div>
 
       <div class="gallery">
+        <article class="card walk-cycle-showcase" data-tags="student 2d">
+          <div class="media" id="main-walk-cycle-container">
+            <!-- Main media injected via JS -->
+          </div>
+          <div class="card-body">
+            <div class="tags">
+              <span class="tag">Student Work</span>
+              <span class="tag">Pasadena City College</span>
+              <span class="tag">2D Animation</span>
+            </div>
+            <h3>PCC Spring 2026 - Student Walk Cycles</h3>
+            <p>
+              An interactive gallery featuring walk cycle animations created by students in the Spring 2026 2D animation class at Pasadena City College. Select a thumbnail below to view different student works.
+            </p>
+            <div class="walk-cycle-thumbnails" id="walk-cycle-thumbnails">
+              <!-- Thumbnails injected via JS -->
+            </div>
+          </div>
+        </article>
+
         <article class="card" data-tags="student 2d">
           <div class="media">
             <video controls preload="metadata" playsinline>
@@ -667,6 +761,80 @@
         });
       });
     });
+
+    // Walk Cycle Gallery Logic
+    const walkCycles = [
+      "joe_micallef_gallery/assets/alekyananush_LATE_3920591_86187685_walkcycle.mp4",
+      "joe_micallef_gallery/assets/alevrasriverasofia_LATE_3902740_86053069_AlevrasAzul_WalkcycleReapeated.mp4",
+      "joe_micallef_gallery/assets/alvarezjaquelyne_LATE_3918998_86019403_walk cycle.mp4",
+      "joe_micallef_gallery/assets/chenethan_LATE_3910646_86032031_walkCycle_video_EthanChen.mp4",
+      "joe_micallef_gallery/assets/cisnerosvanessa_LATE_3903406_86186748_OG WalkingAssign.prj.mp4",
+      "joe_micallef_gallery/assets/gallardotapiajessica_LATE_3886973_86067476_Faith_Gina-Walk.mp4",
+      "joe_micallef_gallery/assets/garciapablo_LATE_3887323_86068352_Walking Animation.mp4",
+      "joe_micallef_gallery/assets/gublerlauren_LATE_3927168_86030767_WalkCycle.mp4",
+      "joe_micallef_gallery/assets/herrmangeorgia_LATE_3949930_86031644_1775104304.6571422.MOV",
+      "joe_micallef_gallery/assets/rodriguezkimberly_LATE_3869193_85987069_Walking cycle.gif",
+      "joe_micallef_gallery/assets/urcuyobrianna_LATE_3948385_86187835_Zarden-1.mp4",
+      "joe_micallef_gallery/assets/vanstralenbrian_3623215_85965591_frogfoot_walk0001.mp4"
+    ];
+
+    const mainContainer = document.getElementById('main-walk-cycle-container');
+    const thumbnailsContainer = document.getElementById('walk-cycle-thumbnails');
+
+    function createMediaElement(src, isMain = false) {
+      const isVideo = src.match(/\.(mp4|mov|webm)$/i);
+      if (isVideo) {
+        const video = document.createElement('video');
+        video.src = src;
+        video.muted = true;
+        video.playsInline = true;
+        video.loop = true;
+        if (isMain) {
+          video.controls = true;
+          video.autoplay = true;
+        } else {
+          video.autoplay = true;
+        }
+        return video;
+      } else {
+        const img = document.createElement('img');
+        img.src = src;
+        img.alt = 'Walk cycle animation';
+        img.loading = 'lazy';
+        return img;
+      }
+    }
+
+    function setMainMedia(src, thumbnailEl) {
+      mainContainer.innerHTML = '';
+      const media = createMediaElement(src, true);
+      mainContainer.appendChild(media);
+      
+      document.querySelectorAll('.walk-cycle-thumbnail').forEach(t => t.classList.remove('active'));
+      if (thumbnailEl) {
+        thumbnailEl.classList.add('active');
+        thumbnailEl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      }
+    }
+
+    if (mainContainer && thumbnailsContainer) {
+      walkCycles.forEach((src, index) => {
+        const thumbBtn = document.createElement('div');
+        thumbBtn.className = 'walk-cycle-thumbnail';
+        thumbBtn.setAttribute('role', 'button');
+        thumbBtn.setAttribute('aria-label', `View walk cycle ${index + 1}`);
+        
+        const media = createMediaElement(src, false);
+        thumbBtn.appendChild(media);
+        
+        thumbBtn.addEventListener('click', () => setMainMedia(src, thumbBtn));
+        thumbnailsContainer.appendChild(thumbBtn);
+      });
+
+      const randomIndex = Math.floor(Math.random() * walkCycles.length);
+      const startingThumb = thumbnailsContainer.children[randomIndex];
+      setMainMedia(walkCycles[randomIndex], startingThumb);
+    }
   </script>
 </body>
 </html>
